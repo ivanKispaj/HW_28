@@ -17,7 +17,7 @@ private:
     static int threads;
     static std::mutex mutex_threads;
 
-    static void sortWithThreads(int *arr, long start, long end);
+    static void sortWithThreads(int *arr, long start, long end, int currThread = 1);
     static void sortWithOutThreads(int *arr, long start, long end);
     static void merge(int *arr, long start, long midle, long end);
 

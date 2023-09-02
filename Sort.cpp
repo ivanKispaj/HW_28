@@ -20,7 +20,7 @@ void Sort::mergeSort(int *arr, long size, bool isMultitraiding)
     sortWithOutThreads(arr, 0, size - 1);
 }
 
-void Sort::sortWithThreads(int *arr, long start, long end)
+void Sort::sortWithThreads(int *arr, long start, long end, int currThread)
 {
     if (start >= end)
     {
@@ -28,26 +28,24 @@ void Sort::sortWithThreads(int *arr, long start, long end)
     }
 
     int mid = (start + end) / 2;
-    Sort::mutex_threads.lock();
-    int thrcount = threads;
-    Sort::mutex_threads.unlock();
-    if (Sort::threads >= (Sort::maxThread - 1) || (end - start) < 10000)
+
+    if (currThread >= Sort::maxThread)
     {
 
-        Sort::sortWithOutThreads(arr, start, end);
-        return;
+        Sort::sortWithThreads(arr, start, mid, currThread);
+        Sort::sortWithThreads(arr,mid + 1, end, currThread);
     }
-    auto f = std::async(std::launch::async, [&]()
-                        { 
-								Sort::mutex_threads.lock();
-								threads++;
-								Sort::mutex_threads.unlock();
-								Sort::sortWithThreads(arr, start, mid);
-								Sort::mutex_threads.lock();
-								threads--;
-								Sort::mutex_threads.unlock(); });
-    Sort::sortWithThreads(arr, mid + 1, end);
-    f.wait();
+    else
+    {
+        auto f = std::async(std::launch::async, [&]()
+                            { 
+								Sort::sortWithThreads(arr, start, mid, currThread + 2);
+                                 });
+         auto f1 = std::async(std::launch::async, [&]()
+                            { 
+								Sort::sortWithThreads(arr, mid + 1, end, currThread + 2);
+                                 });
+    }
     merge(arr, start, mid, end);
 }
 
