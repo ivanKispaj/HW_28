@@ -29,7 +29,7 @@ void Sort::sortWithThreads(int *arr, long start, long end, int currThread)
 
     int mid = (start + end) / 2;
 
-    if (currThread >= Sort::maxThread)
+    if (currThread >= Sort::maxThread - 1)
     {
 
         Sort::sortWithThreads(arr, start, mid, currThread);
