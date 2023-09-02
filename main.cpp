@@ -18,7 +18,7 @@ int main(int argc, const char *argv[])
     {
         Sort::maxThread = std::thread::hardware_concurrency();
     }
-    std::cout << "Using counts thread: " << countThreads << "\n";
+    std::cout << "Using counts thread: " << Sort::maxThread << "\n";
     long size = 100000000;
     int *array = new int[size];
     for (long i = 0; i < size; i++)

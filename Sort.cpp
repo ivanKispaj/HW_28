@@ -7,7 +7,7 @@
 #include "Sort.h"
 
 int Sort::threads = 0;
-int Sort::maxThread = 20; // std::thread::hardware_concurrency();
+int Sort::maxThread = std::thread::hardware_concurrency();
 std::mutex Sort::mutex_threads;
 
 void Sort::mergeSort(int *arr, long size, bool isMultitraiding)
@@ -31,16 +31,14 @@ void Sort::sortWithThreads(int *arr, long start, long end)
     Sort::mutex_threads.lock();
     int thrcount = threads;
     Sort::mutex_threads.unlock();
-    if (Sort::threads > Sort::maxThread)
+    if (Sort::threads >= (Sort::maxThread - 1) || (end - start) < 10000)
     {
 
-        sortWithOutThreads(arr, start, end);
+        Sort::sortWithOutThreads(arr, start, end);
         return;
     }
-    else
-    {
-        auto f = std::async(std::launch::async, [&]()
-                            { 
+    auto f = std::async(std::launch::async, [&]()
+                        { 
 								Sort::mutex_threads.lock();
 								threads++;
 								Sort::mutex_threads.unlock();
@@ -48,10 +46,8 @@ void Sort::sortWithThreads(int *arr, long start, long end)
 								Sort::mutex_threads.lock();
 								threads--;
 								Sort::mutex_threads.unlock(); });
-        Sort::sortWithThreads(arr, mid + 1, end);
-        f.wait();
-    }
-
+    Sort::sortWithThreads(arr, mid + 1, end);
+    f.wait();
     merge(arr, start, mid, end);
 }
 
