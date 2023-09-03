@@ -24,4 +24,11 @@
     The time: 14.000000 seconds
     start one thread test:
     The time: 46.000000 seconds
-    
+
+**After bugfix**
+
+    Using counts thread: 8
+    start
+    The time: 11.000000 seconds
+    start one thread:
+    The time: 48.000000 seconds
