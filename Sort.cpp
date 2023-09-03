@@ -29,7 +29,7 @@ void Sort::sortWithThreads(int *arr, long start, long end, int currThread)
 
     int mid = (start + end) / 2;
 
-    if (currThread >= Sort::maxThread - 1)
+    if (currThread >= Sort::maxThread)
     {
 
         Sort::sortWithThreads(arr, start, mid, currThread);
@@ -45,6 +45,8 @@ void Sort::sortWithThreads(int *arr, long start, long end, int currThread)
                             { 
 								Sort::sortWithThreads(arr, mid + 1, end, currThread + 2);
                                  });
+        f.wait();
+        f1.wait();
     }
     merge(arr, start, mid, end);
 }
@@ -67,46 +69,48 @@ void Sort::merge(int *arr, long start, long midle, long end)
     int left = midle - start + 1;
     int right = end - midle;
 
-    int *Left_arr = new int[left];
-    int *Right_arr = new int[right];
+    int *leftArr = new int[left];
+    int *rightArr = new int[right];
 
     for (int i = 0; i < left; ++i)
-        Left_arr[i] = arr[start + i];
+        leftArr[i] = arr[start + i];
 
     for (int j = 0; j < right; ++j)
-        Right_arr[j] = arr[midle + 1 + j];
+        rightArr[j] = arr[midle + 1 + j];
 
     int i = 0, j = 0;
     int k = start;
     while (i < left && j < right)
     {
-        if (Left_arr[i] <= Right_arr[j])
+        if (leftArr[i] <= rightArr[j])
         {
-            arr[k] = Left_arr[i];
+            arr[k] = leftArr[i];
             i++;
         }
         else
         {
-            arr[k] = Right_arr[j];
+            arr[k] = rightArr[j];
             j++;
         }
         k++;
     }
     while (i < left)
     {
-        arr[k] = Left_arr[i];
+        arr[k] = leftArr[i];
         i++;
         k++;
     }
     while (j < right)
     {
-        arr[k] = Right_arr[j];
+        arr[k] = rightArr[j];
         j++;
         k++;
     }
+    delete[] leftArr;
+    delete[] rightArr;
 }
 
-bool Sort::isSorted(int *arr, long size)
+bool Sort::isSorted(const int *arr, long size)
 {
     for (long i = 0; i < size - 1; i++)
     {

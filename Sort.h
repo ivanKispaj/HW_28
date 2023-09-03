@@ -26,5 +26,5 @@ public:
 
     static int maxThread;
     static void mergeSort(int *arr, long size, bool isMultitreading = true);
-    static bool isSorted(int *arr, long size);
+    static bool isSorted(const int *arr, long size);
 };
